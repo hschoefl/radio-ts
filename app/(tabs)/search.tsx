@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useRadioChannel } from "@/ctx/RadioCtx";
 
-const A1_RADIO_URL = "https://sdsevocdn.xploretv.at/metadata/radio/endava.json";
+const A1_RADIO_URL = process.env.EXPO_PUBLIC_A1_URL!;
 
 const Search = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,13 +43,6 @@ const Search = () => {
 
     fetchRadioChannels();
   }, []);
-
-  // let filteredChannels: RadioChannel[] = channels;
-  // useEffect(() => {
-  //   filteredChannels = channels.filter((item) =>
-  //     item.name.toLowerCase().startsWith(search.toLowerCase())
-  //   );
-  // }, [search]);
 
   if (loading && !channels) {
     return <ActivityIndicator size="large" className="flex-1 justify-center" />;
