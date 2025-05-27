@@ -21,7 +21,7 @@ const Favorites = () => {
   return (
     <SafeAreaView className="flex-1 justify-between">
       <Text className="text-center font-bold text-2xl mt-3">
-        Meine Favoriten
+        Meine Favoriten ({favorites.length})
       </Text>
       <View className="h-4/6 bg-white m-3 rounded-2xl">
         <FlatList
@@ -34,16 +34,17 @@ const Favorites = () => {
             />
           )}
           keyExtractor={(item) => item.name}
-          contentContainerStyle={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 42,
+          numColumns={3}
+          columnWrapperStyle={{
+            flex: 1,
+            justifyContent: "space-around",
+            padding: 12,
           }}
-          className="p-5"
         />
       </View>
-      <View className="bg-blue-200 h-1/6 m-4 rounded-2xl justify-center items-center">
-        <Text>Hier kommt der Player</Text>
+      <View className="bg-white h-1/6 m-4 rounded-2xl justify-center items-center">
+        <Text className="text-center text-lg mb-1">Sie hören gerade</Text>
+        <Text className="text-center text-2xl font-semibold">{nowPlaying}</Text>
       </View>
     </SafeAreaView>
   );

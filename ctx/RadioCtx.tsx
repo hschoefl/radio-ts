@@ -13,15 +13,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RadioChannel } from "@/interfaces/radioInterfaces";
 import { Alert } from "react-native";
 
+import { useAudioPlayer } from "expo-audio";
+
 interface ContextInterface {
-  favorites: RadioChannel[];
-  nowPlaying: string;
-  isPlaying: boolean;
-  channels: RadioChannel[];
-  setRadioChannels: (allChannels: RadioChannel[]) => void;
-  addRadioChannelToFavorites: (channel: RadioChannel) => void;
-  clearFavorites: () => void;
-  maxFavorites: number;
+  favorites: RadioChannel[]; // array der Favoriten, lokal gespeichert
+  nowPlaying: string; // name des gerade gespielten Senders
+  isPlaying: boolean; // Player spielt gerade
+  channels: RadioChannel[]; // alle verfügbaren Radiokanäle, von A1 URL
+  setRadioChannels: (allChannels: RadioChannel[]) => void; // alle Kanäle in State setzen
+  addRadioChannelToFavorites: (channel: RadioChannel) => void; // einen Kanal zur Favoritenliste hinzufügen
+  clearFavorites: () => void; // Favoritenliste löschen
+  maxFavorites: number; // maximale Anzahl der Favoriten (9)
+  setCurrentPlaying: (channelName: string) => void;
+  startPlaying: (name: string, audioUrl: string) => void;
+  stopPlaying: () => void;
 }
 
 const RadioChannelContext = createContext<ContextInterface>(
@@ -33,8 +38,9 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
   const [favorites, setFavorites] = useState<RadioChannel[]>([]);
   const [nowPlaying, setNowPlaying] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [numFavorites, setNumFavorites] = useState<number>(0);
-  const [maxFavorites, setMaxFavorites] = useState<number>(0);
+  const [maxFavorites, setMaxFavorites] = useState<number>(9);
+
+  const player = useAudioPlayer();
 
   // load favorites from localStorage
   useEffect(() => {
@@ -42,7 +48,7 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
       const result = await AsyncStorage.getItem("favorites");
       if (result) {
         setFavorites(JSON.parse(result));
-        setMaxFavorites(result.length + 1);
+        // setMaxFavorites(result.length + 1);
       }
     }
 
@@ -60,6 +66,10 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
   function setRadioChannels(channels: RadioChannel[]) {
     // console.log("Hier bin ich im CTX:", channels);
     setChannels(channels);
+  }
+
+  function setCurrentPlaying(channelName: string): void {
+    setNowPlaying(channelName);
   }
 
   async function addRadioChannelToFavorites(
@@ -82,7 +92,6 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
         audioUrl: channel.audioUrl,
       },
     ]);
-    setNumFavorites(favorites.length + 1);
   }
 
   async function clearFavorites(): Promise<void> {
@@ -91,6 +100,23 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
 
     // Favoriten auf leeres Array setzen
     setFavorites([]);
+    setIsPlaying(false);
+    setNowPlaying("");
+    player.pause();
+    player.remove();
+  }
+
+  function startPlaying(name: string, audioUrl: string) {
+    setIsPlaying(true);
+    setNowPlaying(name);
+    player.replace({ uri: audioUrl });
+    player.play();
+  }
+
+  function stopPlaying() {
+    player.pause();
+    setNowPlaying("");
+    setIsPlaying(false);
   }
 
   return (
@@ -104,6 +130,9 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
         channels,
         maxFavorites,
         clearFavorites,
+        setCurrentPlaying,
+        startPlaying,
+        stopPlaying,
       }}
     >
       {children}

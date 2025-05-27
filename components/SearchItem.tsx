@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 
 import { RadioChannel } from "@/interfaces/radioInterfaces";
 import { Link, RelativePathString, useRouter } from "expo-router";
+import Genres from "./Genres";
 
 interface SearchItemProps {
   channel: RadioChannel;

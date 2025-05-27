@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, Text, Button, TouchableOpacity } from "react-native";
+import { View, Text, Button, TouchableOpacity, Alert } from "react-native";
 
 import { useRadioChannel } from "@/ctx/RadioCtx";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Genres from "@/components/Genres";
 
 const ChannelDetails = () => {
   const [foundChannel, setFoundChannel] = useState<
@@ -28,6 +29,16 @@ const ChannelDetails = () => {
   useEffect(() => {
     setFoundChannel(foundElement);
   }, [foundElement]);
+
+  function handlePress() {
+    // console.log(favorites.length);
+    if (favorites.length === maxFavorites) {
+      Alert.alert(`Es sind maximal ${maxFavorites} Favoriten möglich!`);
+    } else {
+      addRadioChannelToFavorites(foundChannel!);
+      router.back();
+    }
+  }
 
   return (
     <SafeAreaView className="flex-1 p-2 items-center relative">
@@ -54,12 +65,14 @@ const ChannelDetails = () => {
         )}
       </View>
 
+      <Genres genres={foundChannel?.genre} />
+
       <Text className="text-xl mt-2">{foundChannel?.description}</Text>
 
       <View className="flex-row">
         <TouchableOpacity
           className="bg-blue-700 px-3 py-2 w-2/3 mt-4"
-          onPress={() => addRadioChannelToFavorites(foundChannel!)}
+          onPress={handlePress}
           disabled={alreadyFavorite ? true : false}
         >
           {!alreadyFavorite ? (
