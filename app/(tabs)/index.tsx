@@ -1,75 +1,74 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { View, Text, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function HomeScreen() {
+import { useRadioChannel } from "@/ctx/RadioCtx";
+import { SafeAreaView } from "react-native-safe-area-context";
+import FavoriteItem from "@/components/FavoriteItem";
+import { useTimer } from "@/ctx/TimerCtx";
+
+const Favorites = () => {
+  const [timerText, setTimerText] = useState<string>("");
+
+  const { state, dispatch } = useRadioChannel();
+  const { timerValue, currentTimerValue } = useTimer();
+
+  const active: boolean = timerValue != 0;
+
+  if (state.favorites.length === 0 || !state.favorites) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center">
+        <Text className="text-center font-bold text-2xl">
+          Momentan sind keine Favoriten definiert.
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <SafeAreaView className="flex-1 justify-between">
+      <Text className="text-center font-bold text-2xl mt-3">
+        Meine Favoriten ({state.favorites.length})
+      </Text>
+      <View className="h-4/6 bg-white m-2 rounded-2xl">
+        <FlatList
+          data={state.favorites}
+          renderItem={({ item }) => (
+            <FavoriteItem
+              logo={item.logo}
+              audioUrl={item.audioUrl}
+              name={item.name}
+            />
+          )}
+          keyExtractor={(item) => item.name}
+          numColumns={3}
+          columnWrapperStyle={{
+            flex: 1,
+            justifyContent: "space-around",
+            padding: 6,
+          }}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+      <View className="bg-white h-1/6 m-4 rounded-2xl justify-center items-center relative">
+        <Text className="text-center text-lg mb-1">Sie hören gerade</Text>
+        <Text className="text-center text-2xl font-semibold">
+          {state.nowPlaying}
+        </Text>
+        {timerValue !== 0 ? (
+          <View className="mt-2 flex-row items-center">
+            <Ionicons
+              name="timer-outline"
+              size={24}
+              color="green"
+              className=""
+            />
+            <Text className="text-xl ml-1">{currentTimerValue}</Text>
+          </View>
+        ) : null}
+      </View>
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+export default Favorites;
