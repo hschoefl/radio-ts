@@ -1,11 +1,11 @@
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
   type PropsWithChildren,
 } from "react";
-import { useRadioChannel, ChannelActionKind } from "./RadioCtx";
+import { ChannelActionKind, useRadioChannel } from "./RadioCtx";
 
 interface TimerCtxInterface {
   timerValue: number;
@@ -47,7 +47,7 @@ export function TimerContextProvider({ children }: PropsWithChildren) {
       clearTimeout(timerId);
       clearInterval(intervalId);
     };
-  }, [timerValue]);
+  }, [timerValue, dispatch]);
 
   function setTimer(value: number) {
     setTimerValue(value);

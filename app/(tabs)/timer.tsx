@@ -1,6 +1,6 @@
 import TimerButton from "@/components/TimerButton";
 import { useTimer } from "@/ctx/TimerCtx";
-import { View, Text, Button } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TIMER_VALUES = [
@@ -39,7 +39,7 @@ const TIMER_VALUES = [
 ];
 
 const Timer = () => {
-  const { setTimer, timerValue, currentTimerValue, stopTimer } = useTimer();
+  const { setTimer, stopTimer } = useTimer();
 
   function handleTimerPress(value: number): void {
     // console.log(`${value} wurde ausgewählt`);
@@ -60,11 +60,13 @@ const Timer = () => {
             />
           ))}
         </View>
-        <Button title="Sleep Timer löschen" onPress={() => stopTimer()} />
-        <Text className="mt-5 text-xl">Sleep Timer: {timerValue}</Text>
-        <Text className="mt-5 text-xl">
-          Current Timer Value: {currentTimerValue}
-        </Text>
+
+        <TouchableOpacity
+          onPress={() => stopTimer()}
+          className="bg-blue-500 mt-4 py-2 px-2 rounded-lg"
+        >
+          <Text className="text-center text-xl">Sleep Timer löschen</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
