@@ -1,19 +1,16 @@
 import {
   createContext,
+  Dispatch,
   useContext,
   useEffect,
-  useState,
   useReducer,
   type PropsWithChildren,
-  Dispatch,
 } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { RadioChannel } from "@/interfaces/radioInterfaces";
-
-import { useAudioPlayer } from "expo-audio";
 import { Actions, StateType } from "@/types/radioCtxTypes";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 
 interface ContextInterface {
   state: StateType;
@@ -82,7 +79,7 @@ const reducer = (state: StateType, action: Actions): StateType => {
       return {
         ...state,
         favorites: state.favorites.filter(
-          (item) => item.name != action.payload
+          (item) => item.name !== action.payload
         ),
         nowPlaying: action.payload === state.nowPlaying ? "" : state.nowPlaying,
         isPlaying:
@@ -144,6 +141,30 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
       }
     }
 
+    // async function setAudioMode() {
+    //   await setAudioModeAsync({
+    //     shouldPlayInBackground: true,
+    //   });
+    //   console.log("Setting audioMode for playing in background");
+    // }
+
+    // setAudioMode();
+
+    setAudioModeAsync({
+      allowsRecording: false,
+      interruptionMode: "doNotMix",
+      interruptionModeAndroid: "doNotMix",
+      playsInSilentMode: true,
+      shouldPlayInBackground: true,
+      shouldRouteThroughEarpiece: false,
+    })
+      .then(() => {
+        console.log("AudioMode: set to play in background");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
     loadFavorites();
   }, []);
 
@@ -164,7 +185,7 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
       player.replace({ uri: state.audioUrl });
       player.play();
     }
-  }, [state.isPlaying, state.audioUrl]);
+  }, [state.isPlaying, state.audioUrl, player]);
 
   return (
     <RadioChannelContext.Provider
