@@ -1,10 +1,10 @@
 import { Image } from "expo-image";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 
 import { useAudioPlayer } from "expo-audio";
 
+import { ChannelActionKind, useRadioChannel } from "@/ctx/RadioCtx";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRadioChannel, ChannelActionKind } from "@/ctx/RadioCtx";
 
 interface FavoriteItemProps {
   logo: string;
@@ -61,11 +61,13 @@ const FavoriteItem = ({ logo, name, audioUrl }: FavoriteItemProps) => {
   return (
     <TouchableOpacity onPress={handlePlay} onLongPress={handleLongPress}>
       {/* <View className="items-center p-2 relative border-2 border-green-600 border-solid rounded-2xl h-40"> */}
-      <View
+      {/* <View
         className={`items-center p-2 rounded-2xl h-44 relative ${
           active ? "border-2 border-green-600 border-solid" : ""
         } `}
-      >
+      > */}
+
+      <View className={`items-center p-2 rounded-2xl h-32 relative `}>
         <Image
           source={logo}
           contentFit="cover"
@@ -75,12 +77,14 @@ const FavoriteItem = ({ logo, name, audioUrl }: FavoriteItemProps) => {
             borderRadius: 8,
           }}
         />
-        <Text className="text-sm w-24 text-center" numberOfLines={2}>
+        <Text className="text-sm w-24 text-center mt-1" numberOfLines={2}>
           {name}
         </Text>
         {active && (
-          <View className="bg-white absolute bottom-1 right-1 opacity-65 rounded-full justify-center items-center w-9 h-9">
-            <FontAwesome6 name="play" size={30} color="green" />
+          <View className="bg-black top-2 left-2 opacity-60 h-full w-full absolute rounded-xl">
+            <View className="absolute bottom-1 right-1 opacity-100 rounded-full justify-center items-center w-24 h-24">
+              <FontAwesome6 name="play" size={48} color="yellow" />
+            </View>
           </View>
         )}
       </View>

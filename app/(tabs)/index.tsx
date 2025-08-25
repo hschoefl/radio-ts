@@ -1,12 +1,12 @@
-import { View, Text, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { FlatList, Text, View } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { useRadioChannel } from "@/ctx/RadioCtx";
-import { SafeAreaView } from "react-native-safe-area-context";
 import FavoriteItem from "@/components/FavoriteItem";
+import { useRadioChannel } from "@/ctx/RadioCtx";
 import { useTimer } from "@/ctx/TimerCtx";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Favorites = () => {
   const [timerText, setTimerText] = useState<string>("");
@@ -46,7 +46,7 @@ const Favorites = () => {
           columnWrapperStyle={{
             flex: 1,
             justifyContent: "space-around",
-            padding: 6,
+            padding: 16,
           }}
         />
       </View>
