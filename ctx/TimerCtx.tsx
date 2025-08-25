@@ -1,3 +1,7 @@
+import Constants from "expo-constants";
+
+import BackgroundTimer from "react-native-background-timer";
+
 import {
   createContext,
   useContext,
@@ -22,8 +26,6 @@ export function TimerContextProvider({ children }: PropsWithChildren) {
   const { dispatch } = useRadioChannel();
 
   useEffect(() => {
-    let intervalId;
-
     if (timerValue === 0) {
       // stopPlaying();
       dispatch({ type: ChannelActionKind.STOP_PLAYING });
@@ -32,20 +34,45 @@ export function TimerContextProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    const timerId = setTimeout(() => {
-      // stopPlaying();
-      dispatch({ type: ChannelActionKind.STOP_PLAYING });
-      setTimerValue(0);
-      setCurrentTimerValue(0);
-    }, 1000 * 60 * timerValue);
+    let timerId: number;
+    let intervalId: number;
 
-    intervalId = setInterval(() => {
-      setCurrentTimerValue((prev) => prev - 1);
-    }, 1000 * 60);
+    if (Constants.executionEnvironment === "storeClient") {
+      timerId = setTimeout(() => {
+        // stopPlaying();
+        dispatch({ type: ChannelActionKind.STOP_PLAYING });
+        setTimerValue(0);
+        setCurrentTimerValue(0);
+      }, 1000 * 60 * timerValue);
+
+      console.log("TimerId: ", timerId);
+
+      intervalId = setInterval(() => {
+        setCurrentTimerValue((prev) => prev - 1);
+      }, 1000 * 60);
+    } else {
+      timerId = BackgroundTimer.setTimeout(() => {
+        // stopPlaying();
+        dispatch({ type: ChannelActionKind.STOP_PLAYING });
+        setTimerValue(0);
+        setCurrentTimerValue(0);
+      }, 1000 * 60 * timerValue);
+
+      console.log("TimerId: ", timerId);
+
+      intervalId = BackgroundTimer.setInterval(() => {
+        setCurrentTimerValue((prev) => prev - 1);
+      }, 1000 * 60);
+    }
 
     return () => {
-      clearTimeout(timerId);
-      clearInterval(intervalId);
+      if (Constants.executionEnvironment === "storeClient") {
+        clearTimeout(timerId);
+        clearInterval(intervalId);
+      } else {
+        BackgroundTimer.clearTimeout(timerId);
+        BackgroundTimer.clearInterval(intervalId);
+      }
     };
   }, [timerValue, dispatch]);
 
