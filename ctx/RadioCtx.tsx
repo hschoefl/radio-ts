@@ -7,7 +7,7 @@ import {
   type PropsWithChildren,
 } from "react";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Storage from "expo-sqlite/kv-store";
 
 import { Actions, StateType } from "@/types/radioCtxTypes";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
@@ -125,7 +125,7 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
   // load favorites from localStorage when app starts
   useEffect(() => {
     async function loadFavorites() {
-      const result = await AsyncStorage.getItem("favorites");
+      const result = await Storage.getItem("favorites");
       if (result && result.length > 0) {
         // setFavorites(JSON.parse(result));
         console.log("Konnte Favoriten von LocalStorage laden");
@@ -171,7 +171,7 @@ export function RadioChannelProvider({ children }: PropsWithChildren) {
   // if favorites are changing -> save to localStorage
   useEffect(() => {
     async function saveFavorites() {
-      await AsyncStorage.setItem("favorites", JSON.stringify(state.favorites));
+      await Storage.setItem("favorites", JSON.stringify(state.favorites));
     }
     saveFavorites();
   }, [state.favorites]);

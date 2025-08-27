@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FlatList, Text, View } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -9,12 +9,12 @@ import { useTimer } from "@/ctx/TimerCtx";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Favorites = () => {
-  const [timerText, setTimerText] = useState<string>("");
+  // const [timerText, setTimerText] = useState<string>("");
 
-  const { state, dispatch } = useRadioChannel();
+  const { state } = useRadioChannel();
   const { timerValue, currentTimerValue } = useTimer();
 
-  const active: boolean = timerValue != 0;
+  // const active: boolean = timerValue !== 0;
 
   if (state.favorites.length === 0 || !state.favorites) {
     return (

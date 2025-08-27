@@ -1,8 +1,6 @@
 import { Image } from "expo-image";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 
-import { useAudioPlayer } from "expo-audio";
-
 import { ChannelActionKind, useRadioChannel } from "@/ctx/RadioCtx";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
@@ -16,7 +14,7 @@ const FavoriteItem = ({ logo, name, audioUrl }: FavoriteItemProps) => {
   const { state, dispatch } = useRadioChannel();
 
   // console.log(audioUrl);
-  const player = useAudioPlayer();
+  // const player = useAudioPlayer();
 
   const active: boolean = name === state.nowPlaying;
 
